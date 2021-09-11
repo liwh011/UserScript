@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         知乎关键词屏蔽问题
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
 // @author       liwh011
 // @match        https://www.zhihu.com/
@@ -28,7 +28,7 @@ let 屏蔽词列表 = [
     '/(中国[男女]性|[国锅蝈][男蝻女])/',
     '/女[权拳]/',
     '/普通?[却且]?自?信/',
-]
+].reverse()
 // 即给该问题点不感兴趣，以达到让知乎的推荐机制减少推荐相关内容的目的。
 let 是否设置不感兴趣 = true
 // 点击不感兴趣后会出现一系列tag
@@ -321,7 +321,7 @@ const initOptionPanel = () => {
 
     <div style="position: fixed; top: 60px; right: 0; margin: 16px; z-index: 999; height: auto; width: 50px; padding: 8px 0;"
         class="Button CornerButton Button--plain"
-        @click="showPanel"
+        @click.stop="showPanel"
         v-if="!panelVisible"
     >
         <a style="color: rgb(15, 136, 235); display: flex; flex-direction: column; align-items: center;" type="button" class="Button Button--plain">
@@ -341,11 +341,11 @@ const initOptionPanel = () => {
     <div v-if="panelVisible"
         id="optionPanel"
         tabindex="-1"
-        @blur="hidePanel"
+        @click.stop=""
         style="position: fixed; top: 0; right: 0; width: 450px; height: calc(100vh - 48px); margin: 24px;"
         class="Popover-content Popover-content--bottom PushNotifications-menuContainer PushNotifications-menuContainer--old Popover-content--fixed Popover-content--arrowed undefined Popover-content-enter-done container">
         
-        <div class="Messages-header">
+        <div class="Messages-header" @click.stop="">
             <button
                 class="Button Messages-tab Messages-myMessageTab Button--plain"
                 style="display: flex; align-items: center; padding: 0 8px;"
@@ -363,7 +363,7 @@ const initOptionPanel = () => {
             </button>
         </div>
 
-        <div style="overflow-y: auto; height: calc(100% - 48px);" >
+        <div style="overflow-y: auto; height: calc(100% - 48px);">
             <div class="css-9ytsk0">
                 <div class="css-17ucl2c">
                     <div class="css-1pysja1">
@@ -441,7 +441,11 @@ const initOptionPanel = () => {
                                 </svg>
                             </div>
                         </div>
-                        <button class="Button Button--plain Button--blue SearchBar-askButton" @click="expandBanWords^=1" v-if="banWordList.length>3" >
+                        <button class="Button Button--plain Button--blue SearchBar-askButton"
+                            style="margin: 0;"
+                            @click="expandBanWords^=1"
+                            v-if="banWordList.length>3"
+                        >
                             {{ expandBanWords==false ? \`展开 (共\${banWordList.length}个) >\` : '< 收起' }}
                         </button>
                     </div>
@@ -502,7 +506,7 @@ const initVue = () => {
                 multipleLineNewWordInput: '',   // 导入屏蔽词的多行input
 
                 panelVisible: false,    // 面板显示隐藏
-                expandBanWords: false,  // 是否展开所有屏蔽词
+                expandBanWords: GM_getValue('showBanTip', null) === null ? true : false,  // 是否展开所有屏蔽词
                 copySuccess: false, // 是否复制成功
                 clearAllDoubleConfirm: false,   // 清空全部的二次确认flag
 
@@ -514,7 +518,7 @@ const initVue = () => {
         },
         methods: {
             hidePanel() { this.panelVisible = false },
-            showPanel() { this.panelVisible = true; setTimeout(() => { document.getElementById('optionPanel').focus() }) },
+            showPanel() { this.panelVisible = true; },
 
             addWord() {
                 if (!this.newWordInput) return
@@ -571,6 +575,9 @@ const initVue = () => {
             showBanTip(v) { GM_setValue('showBanTip', v); 是否显示已被屏蔽条目 = v },
             setUninterested(v) { GM_setValue('setUninterested', v); 是否设置不感兴趣 = v },
             banUninterestedTag(v) { GM_setValue('banUninterestedTag', v); 是否设置不感兴趣TAG = v },
+        },
+        mounted() {
+            document.onclick = this.hidePanel
         }
     }
     Vue.createApp(app).mount('#banapp')
