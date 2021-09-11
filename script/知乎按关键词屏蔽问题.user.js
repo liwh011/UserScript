@@ -10,6 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_addElement
 // @grant        GM_setClipboard
+// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/%E7%9F%A5%E4%B9%8E%E6%8C%89%E5%85%B3%E9%94%AE%E8%AF%8D%E5%B1%8F%E8%94%BD%E9%97%AE%E9%A2%98.user.js
 // ==/UserScript==
 
 
