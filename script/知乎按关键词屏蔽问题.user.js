@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         知乎关键词屏蔽问题
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
 // @author       liwh011
 // @match        https://www.zhihu.com/
@@ -507,7 +507,7 @@ const initVue = () => {
                 multipleLineNewWordInput: '',   // 导入屏蔽词的多行input
 
                 panelVisible: false,    // 面板显示隐藏
-                expandBanWords: GM_getValue('showBanTip', null) === null ? true : false,  // 是否展开所有屏蔽词
+                expandBanWords: GM_getValue('banWordList', null) === null ? true : false,  // 是否展开所有屏蔽词
                 copySuccess: false, // 是否复制成功
                 clearAllDoubleConfirm: false,   // 清空全部的二次确认flag
 
