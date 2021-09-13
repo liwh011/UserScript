@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         知乎关键词屏蔽问题
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
 // @author       liwh011
 // @match        https://www.zhihu.com/
@@ -150,7 +150,7 @@ class Question {
     }
 
     setUninterested() {
-        const moreBtn = findChildDom(dom, (c) => c.id?.startsWith('Popover') && c.classList?.contains('OptionsButton'))
+        const moreBtn = findChildDom(this.dom, (c) => c.id?.startsWith('Popover') && c.classList?.contains('OptionsButton'))
         moreBtn.click()
         const id = moreBtn.id.match(/Popover([0-9]*)-toggle/)[1]
         findChildDom(document.getElementById(`Popover${id}-content`),
