@@ -20,26 +20,27 @@ let defaultConfig = {
 
 
 export default (() => {
-    /**
-     * @type defaultConfig
-     */
-    let config = {}
     for (let key in defaultConfig) {
         // 读取GM存储的配置，覆盖默认配置
         defaultConfig[key] = GM_getValue(key, defaultConfig[key])
 
-        // 定义一个中介对象，每个属性的SETTER自动保存到存储当中
-        Object.defineProperty(config, key, {
-            configurable: true,
-            enumerable: true,
-            get() {
-                return defaultConfig[key]
-            },
-            set(v) {
-                defaultConfig[key] = v
-                GM_setValue(key, v)
-            }
-        })
+        if (Array.isArray(defaultConfig[key])) {
+            defaultConfig[key] = new Proxy(defaultConfig[key], {
+                set(target, idx, value, receiver) {
+                    target[idx] = value
+                    GM_setValue(key, defaultConfig[key])
+                    return true
+                }
+            })
+        }
     }
-    return config
+
+    return new Proxy(defaultConfig, {
+        get(target, key) { return target[key] },
+        set(target, key, value, receiver) {
+            GM_setValue(key, value)
+            target[key] = value
+            return true
+        }
+    })
 })()
