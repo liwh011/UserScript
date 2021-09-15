@@ -1,4 +1,4 @@
-import { showDom, hideDom, attachHiddenClass, attachShownClass, findChildDom, findBanWord } from "./util";
+import { findChildDom } from "./util";
 
 
 export class Question {
@@ -49,50 +49,6 @@ export class Question {
     isHidden(dom) { return dom.classList.contains('banedByUser') }
     // 是否被用户手动恢复了
     isShown(dom) { return dom.classList.contains('recoveredByUser') }
-
-
-    removeFromList() {
-        hideDom(this.dom)
-        attachHiddenClass(this.dom)
-    }
-
-    replaceWithHiddenNotice(bannedWord) {
-        attachHiddenClass(this.dom) // 添加一个class作为标记，标记这个问题已经被隐藏了
-        hideDom(this.dom.firstChild.firstChild)
-
-        // 创建屏蔽成功的提示dom
-        let banTipDom = document.createElement('a')
-        banTipDom.appendChild(document.createTextNode(`已屏蔽，点击恢复。（关键词：${bannedWord}）`))
-        banTipDom.classList.add('Button', 'ContentItem-more', 'Button--plain')
-        banTipDom.onclick = () => {
-            attachShownClass(this.dom) // 添加一个class作为标记，标记这个dom已经被手动恢复了
-            showDom(this.dom.firstChild.firstChild)
-            hideDom(banTipDom)
-        }
-        this.dom.firstChild.appendChild(banTipDom)
-    }
-
-    setUninterested() {
-        const moreBtn = findChildDom(this.dom, (c) => c.id?.startsWith('Popover') && c.classList?.contains('OptionsButton'))
-        moreBtn.click()
-        const id = moreBtn.id.match(/Popover([0-9]*)-toggle/)[1]
-        findChildDom(document.getElementById(`Popover${id}-content`),
-            c => c.type === 'button' && c.innerText === '不感兴趣')?.click()
-    }
-
-    banUninterestedTags() {
-        this.uninterestedTags = Array.from(this.dom.getElementsByClassName('Button TopstoryItem-uninterestTag'))
-        let f = false
-        this.uninterestedTags.forEach(d => {
-            if (findBanWord(d.innerText)) {
-                d.click()
-                f = true
-            }
-        })
-        if (f) {
-            this.dom.getElementsByClassName('Button TopstoryItem-actionButton Button--plain')[0]?.click()
-        }
-    }
 
 
 }

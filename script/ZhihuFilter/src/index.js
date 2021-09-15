@@ -17,6 +17,9 @@ import { initVue } from "./vueApp";
 import { Question } from './question'
 import config from './config'
 import { findBanWord } from "./util";
+import {
+    BlockerFactory,
+} from "./questionBlocker";
 
 function main() {
     'use strict';
@@ -29,7 +32,7 @@ function main() {
         const questions = Array.from(questionContainerDom.childNodes)
             .slice(processedDomCount)
             .filter(d => !d.classList.contains('TopstoryItem--advertCard') && d.classList.contains('TopstoryItem-isRecommend'))
-            .map(v => { try { return new Question(v) } catch(e) { console.log(e); return null } })
+            .map(v => { try { return new Question(v) } catch (e) { console.log(e); return null } })
 
         questions.forEach(question => {
             if (!question) return
@@ -38,18 +41,7 @@ function main() {
             const bannedWord = findBanWord(question.title)
             if (!bannedWord) return
 
-            if (config.setUninterested) {
-                question.setUninterested()
-                if (config.banUninterestedTag) {
-                    question.banUninterestedTags()
-                }
-                return
-            }
-            if (config.showBanTip) {
-                question.replaceWithHiddenNotice(bannedWord)
-            } else {
-                question.removeFromList()
-            }
+            BlockerFactory.getBlocker(question).block()
         })
 
         processedDomCount += questions.length
