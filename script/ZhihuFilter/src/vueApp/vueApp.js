@@ -1,7 +1,9 @@
-import config from './config'
+import zSwitch from './components/zSwitch';
+import config from '../config'
+import zInput from './components/zInput';
 
 const html = `
-    <div id="banapp">
+
 
 
     <div style="position: fixed; top: 60px; right: 0; margin: 16px; z-index: 999; height: auto; width: 50px; padding: 8px 0;"
@@ -55,9 +57,7 @@ const html = `
                         <div class="css-uuymsm">在原问题处显示“已屏蔽该问题”提示</div>
                         <div class="css-9z9vmi">掩耳盗铃（仅适用于未开启“设置不感兴趣”）</div>
                     </div>
-                    <label class="Switch" :class="{ 'Switch--checked': config.showBanTip, 'Switch--disabled': config.setUninterested }">
-                        <input class="Switch-input" type="checkbox" v-model="config.showBanTip" :disabled="config.setUninterested">
-                    </label>
+                    <z-switch v-model="config.showBanTip" :disabled="config.setUninterested"></z-switch>
                 </div>
             </div>
 
@@ -67,9 +67,7 @@ const html = `
                         <div class="css-uuymsm">使用“不感兴趣”来屏蔽问题</div>
                         <div class="css-9z9vmi">效果一般，可让推荐系统不推送类似问题</div>
                     </div>
-                    <label class="Switch" :class="{ 'Switch--checked': config.setUninterested }">
-                        <input class="Switch-input" type="checkbox" v-model="config.setUninterested">
-                    </label>
+                    <z-switch v-model="config.setUninterested"></z-switch>
                 </div>
             </div>
 
@@ -79,9 +77,7 @@ const html = `
                         <div class="css-uuymsm">“不感兴趣”后按照屏蔽词来提交TAG</div>
                         <div class="css-9z9vmi">效果强力，带有某个TAG的问题都不会被推送了</div>
                     </div>
-                    <label class="Switch" :class="{ 'Switch--checked': config.banUninterestedTag, 'Switch--disabled': !config.setUninterested }">
-                        <input class="Switch-input" type="checkbox" v-model="config.banUninterestedTag" :disabled="!config.setUninterested">
-                    </label>
+                    <z-switch v-model="config.banUninterestedTag" :disabled="!config.setUninterested"></z-switch>
                 </div>
             </div>
 
@@ -92,9 +88,7 @@ const html = `
                         <div class="css-9z9vmi">支持正则(/reg/)</div>
                     </div>
                     <div style="display: flex;">
-                        <label class="SearchBar-input Input-wrapper Input-wrapper--grey">
-                            <input type="text" autocomplete="off" class="Input" placeholder="输入屏蔽词或正则" v-model="newWordInput">
-                        </label>
+                        <z-input placeholder="输入屏蔽词或正则" v-model="newWordInput" />
                         <button type="button" class="Button SearchBar-askButton Button--primary Button--blue" @click="addWord">保存</button>
                     </div>
                 </div>
@@ -175,7 +169,7 @@ const html = `
         </div>
 
     </div>
-    </div>
+
 `;
 
 
@@ -337,11 +331,14 @@ export const initVue = () => {
 
     // html
     const ele = document.createElement('div')
-    ele.innerHTML = html
+    ele.innerHTML = '<div id="banapp"></div>'
     document.body.appendChild(ele)
 
 
-    const app = Vue.createApp(script)
+    const app = Vue.createApp({...script, template: html})
+    app.component(zSwitch.name, zSwitch.definition)
+    app.component(zInput.name, zInput.definition)
+
     app.mount('#banapp')
     return app
 }
