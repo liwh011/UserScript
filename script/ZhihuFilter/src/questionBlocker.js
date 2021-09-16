@@ -1,15 +1,25 @@
-import { Question } from "./question";
+import { Question, VideoItem } from "./question";
 import { showDom, hideDom, attachHiddenClass, attachShownClass, findChildDom, findBanWord } from "./util";
 import config from "./config";
 
 export class BlockerFactory {
     static getBlocker(question) {
+        if (question instanceof VideoItem) {
+            if (config.hideVideo) {
+                // return new RemoveFromListBlocker(question)
+                return new ReplaceWithHiddenNoticeBlocker(question, '视频')
+            }
+        }
+
+
         if (config.setUninterested) {
             if (config.banUninterestedTag) {
                 return new BanUninterestedTagBlocker(question)
             }
             return new SetUninterestedBlocker(question)
         }
+
+
         if (config.showBanTip) {
             const bannedWord = '占位'
             return new ReplaceWithHiddenNoticeBlocker(question, bannedWord)

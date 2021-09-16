@@ -16,6 +16,9 @@ let defaultConfig = {
     banUninterestedTag: true,
     // 当屏蔽后，是否在该问题的原地方显示“该问题已被屏蔽，点击可以恢复”的提示，点击可以还原并查看。
     showBanTip: true,
+
+    // 隐藏视频
+    hideVideo: false,
 }
 
 
