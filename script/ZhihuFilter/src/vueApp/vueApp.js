@@ -2,6 +2,7 @@ import zSwitch from './components/zSwitch';
 import config from '../config'
 import zInput from './components/zInput';
 import zButton from './components/zButton';
+import zTag from './components/zTag';
 
 const html = `
 
@@ -103,14 +104,12 @@ const html = `
                 </div>
                 <div style="padding: 0px 16px 16px 16px;">
                     <div v-if="config.banWordList.length>0">
-                        <div
-                            class="Tag tag-margin"
-                            style="height: auto;"
+                        <z-tag
                             v-for="(word, idx) in (expandBanWords ? Array.from(config.banWordList).reverse() : Array.from(config.banWordList).reverse().slice(0,3))"
                             :key="idx"
                         >
-                            <div class="Tag-content" style="display: flex; align-items: center;">
-                                {{ word }}
+                            {{ word }}
+                            <template #extra>
                                 <svg width="20px" height="20px" viewBox="0 0 30 30" class="css-1p094v5" fill="none" style="margin-left: 4px" @click="removeWord(word)">
                                     <g opacity=".5">
                                         <g fill="#000" opacity=".5">
@@ -119,15 +118,11 @@ const html = `
                                         </g>
                                     </g>
                                 </svg>
-                            </div>
-                        </div>
-                        <button class="Button Button--plain Button--blue SearchBar-askButton"
-                            style="margin: 0;"
-                            @click="expandBanWords^=1"
-                            v-if="config.banWordList.length>3"
-                        >
+                            </template>
+                        </z-tag>
+                        <z-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3" :style="{ margin: 0, }">
                             {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
-                        </button>
+                        </z-button>
                     </div>
                     <div v-else>暂无</div>
                 </div>
@@ -340,6 +335,7 @@ export const initVue = () => {
     app.component(zSwitch.name, zSwitch.definition)
     app.component(zInput.name, zInput.definition)
     app.component(zButton.name, zButton.definition)
+    app.component(zTag.name, zTag.definition)
 
     app.mount('#banapp')
     return app
