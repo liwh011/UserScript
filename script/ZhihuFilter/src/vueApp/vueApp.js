@@ -1,6 +1,7 @@
 import zSwitch from './components/zSwitch';
 import config from '../config'
 import zInput from './components/zInput';
+import zButton from './components/zButton';
 
 const html = `
 
@@ -89,7 +90,7 @@ const html = `
                     </div>
                     <div style="display: flex;">
                         <z-input placeholder="输入屏蔽词或正则" v-model="newWordInput" />
-                        <button type="button" class="Button SearchBar-askButton Button--primary Button--blue" @click="addWord">保存</button>
+                        <z-button @click="addWord">保存</z-button>
                     </div>
                 </div>
             </div>
@@ -143,7 +144,7 @@ const html = `
                     <label class="SearchBar-input Input-wrapper Input-wrapper--grey" style="height: auto;">
                         <textarea type="text" class="Input" placeholder="输入屏蔽词或正则" style="overflow-y: visible; height: 100px;" v-model="multipleLineNewWordInput"></textarea>
                     </label>
-                    <button type="button" class="Button SearchBar-askButton Button--primary Button--blue" style="height: 34px;" @click="multipleLineAddWord">添加</button>
+                    <z-button @click="multipleLineAddWord">添加</z-button>
                 </div>
             </div>
 
@@ -153,7 +154,7 @@ const html = `
                         <div class="css-uuymsm">导出屏蔽词</div>
                         <div class="css-9z9vmi">将所有屏蔽词复制到剪贴板</div>
                     </div>
-                    <button class="Button Button--plain Button--blue" @click="exportWordsToClipboard">{{ copySuccess ? '已复制√' : '复制'}}</button>
+                    <z-button @click="exportWordsToClipboard" type="text">{{ copySuccess ? '已复制√' : '复制'}}</z-button>
                 </div>
             </div>
 
@@ -163,7 +164,7 @@ const html = `
                         <div class="css-uuymsm">删除所有屏蔽词</div>
                         <div class="css-9z9vmi">删除所有屏蔽词</div>
                     </div>
-                    <button class="Button Button--plain Button--red" @click="clearWordList">{{ clearAllDoubleConfirm ? '再次点击清空' : '清空'}}</button>
+                    <z-button @click="clearWordList" type="text" danger>{{ clearAllDoubleConfirm ? '再次点击清空' : '清空'}}</z-button>
                 </div>
             </div>
         </div>
@@ -338,6 +339,7 @@ export const initVue = () => {
     const app = Vue.createApp({...script, template: html})
     app.component(zSwitch.name, zSwitch.definition)
     app.component(zInput.name, zInput.definition)
+    app.component(zButton.name, zButton.definition)
 
     app.mount('#banapp')
     return app
