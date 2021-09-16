@@ -1,8 +1,23 @@
 import { findChildDom } from "./util";
 
+export class ListItem {
+    /**
+     * 
+     * @param {HTMLElement} dom 
+     */
+    static from(dom) {
+        if (dom.getElementsByClassName('ZVideoItem-video').length > 0) {
+            return new VideoItem(dom)
+        } else {
+            return new Question(dom)
+        }
+    }
 
-export class Question {
     constructor(dom) {
+        if (new.target === ListItem) {
+            throw new Error('不能实例化ListItem')
+        }
+
         this.dom = dom
         this.title = this.getTitle(dom)
         this.answer = this.getAnswer(dom)
@@ -50,6 +65,18 @@ export class Question {
     // 是否被用户手动恢复了
     isShown(dom) { return dom.classList.contains('recoveredByUser') }
 
-
 }
 
+
+export class Question extends ListItem {
+    constructor(dom) {
+        super(dom)
+    }
+}
+
+
+export class VideoItem extends ListItem {
+    constructor(dom) {
+        super(dom)
+    }
+}
