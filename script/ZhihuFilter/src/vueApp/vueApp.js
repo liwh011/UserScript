@@ -3,6 +3,7 @@ import config from '../config'
 import zInput from './components/zInput';
 import zButton from './components/zButton';
 import zTag from './components/zTag';
+import zThing from './components/zThing';
 
 const html = `
 
@@ -54,113 +55,99 @@ const html = `
 
         <div style="overflow-y: auto; height: calc(100% - 48px);">
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">在原问题处显示“已屏蔽该问题”提示</div>
-                        <div class="css-9z9vmi">掩耳盗铃（仅适用于未开启“设置不感兴趣”）</div>
-                    </div>
-                    <z-switch v-model="config.showBanTip" :disabled="config.setUninterested"></z-switch>
-                </div>
+                <z-thing title="在原问题处显示“已屏蔽该问题”提示" description="掩耳盗铃（仅适用于未开启“设置不感兴趣”）">
+                    <template #extra>
+                        <z-switch v-model="config.showBanTip" :disabled="config.setUninterested"></z-switch>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">使用“不感兴趣”来屏蔽问题</div>
-                        <div class="css-9z9vmi">效果一般，可让推荐系统不推送类似问题</div>
-                    </div>
-                    <z-switch v-model="config.setUninterested"></z-switch>
-                </div>
+                <z-thing title="使用“不感兴趣”来屏蔽问题" description="效果一般，可让推荐系统不推送类似问题">
+                    <template #extra>
+                        <z-switch v-model="config.setUninterested"></z-switch>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">“不感兴趣”后按照屏蔽词来提交TAG</div>
-                        <div class="css-9z9vmi">效果强力，带有某个TAG的问题都不会被推送了</div>
-                    </div>
-                    <z-switch v-model="config.banUninterestedTag" :disabled="!config.setUninterested"></z-switch>
-                </div>
+                <z-thing title="“不感兴趣”后按照屏蔽词来提交TAG" description="效果强力，带有某个TAG的问题都不会被推送了">
+                    <template #extra>
+                        <z-switch v-model="config.banUninterestedTag" :disabled="!config.setUninterested"></z-switch>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">添加屏蔽词</div>
-                        <div class="css-9z9vmi">支持正则(/reg/)</div>
-                    </div>
-                    <div style="display: flex;">
-                        <z-input placeholder="输入屏蔽词或正则" v-model="newWordInput" />
-                        <z-button @click="addWord">保存</z-button>
-                    </div>
-                </div>
+                <z-thing title="添加屏蔽词" description="支持正则(/reg/)">
+                    <template #extra>
+                        <div style="display: flex;">
+                            <z-input placeholder="输入屏蔽词或正则" v-model="newWordInput" />
+                            <z-button @click="addWord">保存</z-button>
+                        </div>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">现有屏蔽词</div>
-                    </div>
-                </div>
-                <div style="padding: 0px 16px 16px 16px;">
-                    <div v-if="config.banWordList.length>0">
-                        <z-tag
-                            v-for="(word, idx) in (expandBanWords ? Array.from(config.banWordList).reverse() : Array.from(config.banWordList).reverse().slice(0,3))"
-                            :key="idx"
-                        >
-                            {{ word }}
-                            <template #extra>
-                                <svg width="20px" height="20px" viewBox="0 0 30 30" class="css-1p094v5" fill="none" style="margin-left: 4px" @click="removeWord(word)">
-                                    <g opacity=".5">
-                                        <g fill="#000" opacity=".5">
-                                            <path d="M21.397 6.663l1.414 1.414L8.078 22.811l-1.414-1.415z"></path>
-                                            <path d="M22.815 21.4L21.4 22.814 6.66 8.074l1.414-1.415z"></path>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </template>
-                        </z-tag>
-                        <z-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3" :style="{ margin: 0, }">
-                            {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
-                        </z-button>
-                    </div>
-                    <div v-else>暂无</div>
-                </div>
+                <z-thing title="现有屏蔽词">
+                    <template #addition>
+                        <div style="padding: 0px 0px 0px 0px;">
+                            <div v-if="config.banWordList.length>0">
+                                <z-tag
+                                    v-for="(word, idx) in (expandBanWords ? Array.from(config.banWordList).reverse() : Array.from(config.banWordList).reverse().slice(0,3))"
+                                    :key="idx"
+                                >
+                                    {{ word }}
+                                    <template #extra>
+                                        <svg width="20px" height="20px" viewBox="0 0 30 30" class="css-1p094v5" fill="none" style="margin-left: 4px" @click="removeWord(word)">
+                                            <g opacity=".5">
+                                                <g fill="#000" opacity=".5">
+                                                    <path d="M21.397 6.663l1.414 1.414L8.078 22.811l-1.414-1.415z"></path>
+                                                    <path d="M22.815 21.4L21.4 22.814 6.66 8.074l1.414-1.415z"></path>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                    </template>
+                                </z-tag>
+                                <z-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3" :style="{ margin: 0, }">
+                                    {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
+                                </z-button>
+                            </div>
+                            <div v-else>暂无</div>
+                        </div>
+                    </template>
+                </z-thing>
+
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">批量添加屏蔽词</div>
-                        <div class="css-9z9vmi">每行一个屏蔽词，支持正则(/reg/)</div>
-                    </div>
-                </div>
-                <div style="display: flex; padding: 0 16px 16px 16px; align-items: flex-end;">
-                    <label class="SearchBar-input Input-wrapper Input-wrapper--grey" style="height: auto;">
-                        <textarea type="text" class="Input" placeholder="输入屏蔽词或正则" style="overflow-y: visible; height: 100px;" v-model="multipleLineNewWordInput"></textarea>
-                    </label>
-                    <z-button @click="multipleLineAddWord">添加</z-button>
-                </div>
+                <z-thing title="批量添加屏蔽词" description="每行一个屏蔽词，支持正则(/reg/)">
+                    <template #addition>
+                        <div style="display: flex; padding: 0 0px 0px 0px; align-items: flex-end;">
+                            <label class="SearchBar-input Input-wrapper Input-wrapper--grey" style="height: auto;">
+                                <textarea type="text" class="Input" placeholder="输入屏蔽词或正则" style="overflow-y: visible; height: 100px;" v-model="multipleLineNewWordInput"></textarea>
+                            </label>
+                            <z-button @click="multipleLineAddWord">添加</z-button>
+                        </div>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">导出屏蔽词</div>
-                        <div class="css-9z9vmi">将所有屏蔽词复制到剪贴板</div>
-                    </div>
-                    <z-button @click="exportWordsToClipboard" type="text">{{ copySuccess ? '已复制√' : '复制'}}</z-button>
-                </div>
+                <z-thing title="导出屏蔽词" description="将所有屏蔽词复制到剪贴板">
+                    <template #extra>
+                        <z-button @click="exportWordsToClipboard" type="text">{{ copySuccess ? '已复制√' : '复制'}}</z-button>
+                    </template>
+                </z-thing>
             </div>
 
             <div class="css-9ytsk0">
-                <div class="css-17ucl2c">
-                    <div class="css-1pysja1">
-                        <div class="css-uuymsm">删除所有屏蔽词</div>
-                        <div class="css-9z9vmi">删除所有屏蔽词</div>
-                    </div>
-                    <z-button @click="clearWordList" type="text" danger>{{ clearAllDoubleConfirm ? '再次点击清空' : '清空'}}</z-button>
-                </div>
+                <z-thing title="删除所有屏蔽词" description="删除所有屏蔽词">
+                    <template #extra>
+                        <z-button @click="clearWordList" type="text" danger>{{ clearAllDoubleConfirm ? '再次点击清空' : '清空'}}</z-button>
+                    </template>
+                </z-thing>
             </div>
         </div>
 
@@ -242,7 +229,8 @@ const css = `
         min-width: 0;
         border-bottom: 1px solid;
         border-color: #EBEBEB;
-        padding-right: 0;
+        /* padding-right: 0; */
+        padding: 16px;
     }
 
     .css-17ucl2c {
@@ -336,6 +324,7 @@ export const initVue = () => {
     app.component(zInput.name, zInput.definition)
     app.component(zButton.name, zButton.definition)
     app.component(zTag.name, zTag.definition)
+    app.component(zThing.name, zThing.definition)
 
     app.mount('#banapp')
     return app
