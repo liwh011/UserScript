@@ -1,32 +1,26 @@
 import { Question, VideoItem } from "./question";
 import { showDom, hideDom, attachHiddenClass, attachShownClass, findChildDom, findBanWord } from "./util";
-import config from "./config";
+import config, { BAN_MODE } from "./config";
 
 export class BlockerFactory {
     static getBlocker(question) {
+        /**
+         * @type Map<number, typeof Blocker>
+         */
+        const map = new Map([
+            [BAN_MODE.SHOW.value, DoNothingBlocker],
+            [BAN_MODE.HIDE.value, RemoveFromListBlocker],
+            [BAN_MODE.SHOW_BAN_TIP.value, ReplaceWithHiddenNoticeBlocker],
+            [BAN_MODE.SET_UNINTERESTED.value, SetUninterestedBlocker],
+            [BAN_MODE.BAN_TAG.value, BanUninterestedTagBlocker],
+        ])
+
         if (question instanceof VideoItem) {
-            if (config.hideVideo) {
-                // return new RemoveFromListBlocker(question)
-                return new ReplaceWithHiddenNoticeBlocker(question, '视频')
-            }
+            return new (map.get(config.hideVideo))(question)
         }
-
-
-        if (config.setUninterested) {
-            if (config.banUninterestedTag) {
-                return new BanUninterestedTagBlocker(question)
-            }
-            return new SetUninterestedBlocker(question)
-        }
-
-
-        if (config.showBanTip) {
-            const bannedWord = '占位'
-            return new ReplaceWithHiddenNoticeBlocker(question, bannedWord)
-        } else {
-            return new RemoveFromListBlocker(question)
-        }
+        return new (map.get(config.hideQuestion))(question)
     }
+    
 }
 
 
@@ -38,6 +32,18 @@ class Blocker {
     block() { }
 }
 
+
+/**
+ * 直接讲整个问题从列表中隐藏
+ */
+export class DoNothingBlocker extends Blocker {
+    constructor(question) {
+        super()
+    }
+    block() {
+        // do nothing
+    }
+}
 
 /**
  * 直接讲整个问题从列表中隐藏

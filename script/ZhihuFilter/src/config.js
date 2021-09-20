@@ -1,3 +1,13 @@
+export const BAN_MODE = {
+    SHOW: { value: -1, label: '不屏蔽' },
+    HIDE: { value: 0, label: '仅隐藏' },
+    SHOW_BAN_TIP: { value: 1, label: '替换为“被屏蔽提示”' },
+    SET_UNINTERESTED: { value: 2, label: '设置不感兴趣' },
+    BAN_TAG: { value: 3, label: '不感兴趣并提交TAG' },
+}
+
+
+
 let defaultConfig = {
     // 在这里增加屏蔽词，支持正则（以/开头/结尾的字符串）
     banWordList: [
@@ -10,15 +20,16 @@ let defaultConfig = {
         '/女[权拳]/',
         '/普通?[却且]?自?信/',
     ].reverse(),
-    // 即给该问题点不感兴趣，以达到让知乎的推荐机制减少推荐相关内容的目的。
-    setUninterested: true,
-    // 点击不感兴趣后会出现一系列tag
-    banUninterestedTag: true,
-    // 当屏蔽后，是否在该问题的原地方显示“该问题已被屏蔽，点击可以恢复”的提示，点击可以还原并查看。
-    showBanTip: true,
+    // // 即给该问题点不感兴趣，以达到让知乎的推荐机制减少推荐相关内容的目的。
+    // setUninterested: true,
+    // // 点击不感兴趣后会出现一系列tag
+    // banUninterestedTag: true,
+    // // 当屏蔽后，是否在该问题的原地方显示“该问题已被屏蔽，点击可以恢复”的提示，点击可以还原并查看。
+    // showBanTip: true,
 
-    // 隐藏视频
-    hideVideo: false,
+
+    hideQuestion: BAN_MODE.SHOW_BAN_TIP.value,
+    hideVideo: BAN_MODE.SHOW.value,
 }
 
 

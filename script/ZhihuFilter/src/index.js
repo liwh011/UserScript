@@ -64,9 +64,20 @@ GM_addElement('script', {
     type: 'text/javascript'
 });
 
+GM_addElement('script', {
+    src: 'https://unpkg.com/element-plus',
+    type: 'text/javascript'
+});
+
+GM_addElement('link', {
+    href: 'https://unpkg.com/element-plus/dist/index.css',
+    rel: 'stylesheet'
+});
+
+
 // 需要等JS加载完才能调用VUE
 const timerID = setInterval(() => {
-    if ('undefined' == typeof Vue)
+    if ('undefined' == typeof Vue || 'undefined' == typeof ElementPlus)
         return
     initVue()
     main()

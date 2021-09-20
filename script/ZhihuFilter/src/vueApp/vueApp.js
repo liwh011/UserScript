@@ -4,6 +4,7 @@ import zInput from './components/zInput';
 import zButton from './components/zButton';
 import zTag from './components/zTag';
 import zThing from './components/zThing';
+import { BAN_MODE } from '../config';
 
 const html = `
 
@@ -55,6 +56,37 @@ const html = `
 
         <div style="overflow-y: auto; height: calc(100% - 48px);">
             <div class="css-9ytsk0">
+                <z-thing title="问题屏蔽设定" description="适用于有问有答的列表项">
+                    <template #extra>
+                        <el-select v-model="config.hideQuestion" placeholder="请选择">
+                            <el-option
+                                v-for="item in banModeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
+                    </template>
+                </z-thing>
+            </div>
+
+            <div class="css-9ytsk0">
+                <z-thing title="视频屏蔽设定" description="适用于视频项">
+                    <template #extra>
+                        <el-select v-model="config.hideVideo" placeholder="请选择">
+                            <el-option
+                                v-for="item in banModeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
+                    </template>
+                </z-thing>
+            </div>
+
+            <!--
+            <div class="css-9ytsk0">
                 <z-thing title="在原问题处显示“已屏蔽该问题”提示" description="掩耳盗铃（仅适用于未开启“设置不感兴趣”）">
                     <template #extra>
                         <z-switch v-model="config.showBanTip" :disabled="config.setUninterested"></z-switch>
@@ -77,6 +109,7 @@ const html = `
                     </template>
                 </z-thing>
             </div>
+            -->
 
             <div class="css-9ytsk0">
                 <z-thing title="添加屏蔽词" description="支持正则(/reg/)">
@@ -92,33 +125,22 @@ const html = `
             <div class="css-9ytsk0">
                 <z-thing title="现有屏蔽词">
                     <template #addition>
-                        <div style="padding: 0px 0px 0px 0px;">
-                            <div v-if="config.banWordList.length>0">
-                                <z-tag
-                                    v-for="(word, idx) in (expandBanWords ? Array.from(config.banWordList).reverse() : Array.from(config.banWordList).reverse().slice(0,3))"
-                                    :key="idx"
-                                >
-                                    {{ word }}
-                                    <template #extra>
-                                        <svg width="20px" height="20px" viewBox="0 0 30 30" class="css-1p094v5" fill="none" style="margin-left: 4px" @click="removeWord(word)">
-                                            <g opacity=".5">
-                                                <g fill="#000" opacity=".5">
-                                                    <path d="M21.397 6.663l1.414 1.414L8.078 22.811l-1.414-1.415z"></path>
-                                                    <path d="M22.815 21.4L21.4 22.814 6.66 8.074l1.414-1.415z"></path>
-                                                </g>
-                                            </g>
-                                        </svg>
-                                    </template>
-                                </z-tag>
-                                <z-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3" :style="{ margin: 0, }">
-                                    {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
-                                </z-button>
-                            </div>
-                            <div v-else>暂无</div>
-                        </div>
+                        <el-space wrap v-if="config.banWordList.length>0">
+                            <el-tag
+                                v-for="(word, idx) in banWordListPreview()"
+                                :key="idx"
+                                closable
+                                @close="removeWord(word)"
+                            >
+                                {{ word }}
+                            </el-tag>
+                            <el-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3">
+                                {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
+                            </el-button>
+                        </el-space>
+                        <div v-else>暂无</div>
                     </template>
                 </z-thing>
-
             </div>
 
             <div class="css-9ytsk0">
@@ -215,9 +237,22 @@ const script = {
                 this.copySuccess = false
             }, 5000)
         },
+
+
+        banWordListPreview() {
+            if (this.expandBanWords)
+                return Array.from(config.banWordList).reverse()
+            return Array.from(config.banWordList).reverse().slice(0, 3)
+        },
     },
     mounted() {
         document.onclick = this.hidePanel
+    },
+    computed: {
+
+        banModeOptions() {
+            return Array.from(Object.values(BAN_MODE))
+        },
     }
 }
 
@@ -326,6 +361,7 @@ export const initVue = () => {
     app.component(zTag.name, zTag.definition)
     app.component(zThing.name, zThing.definition)
 
+    app.use(ElementPlus)
     app.mount('#banapp')
     return app
 }
