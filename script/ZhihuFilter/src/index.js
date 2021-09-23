@@ -69,10 +69,12 @@ GM_addElement('script', {
     type: 'text/javascript'
 });
 
-GM_addElement('script', {
-    src: 'https://unpkg.com/element-plus',
-    type: 'text/javascript'
-});
+setTimeout(() => {
+    GM_addElement('script', {
+        src: 'https://unpkg.com/element-plus',
+        type: 'text/javascript'
+    });
+}, 1000);
 
 GM_addElement('link', {
     href: 'https://unpkg.com/element-plus/dist/index.css',
