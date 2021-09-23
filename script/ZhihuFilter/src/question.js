@@ -6,7 +6,8 @@ export class ListItem {
      * @param {HTMLElement} dom 
      */
     static from(dom) {
-        if (dom.getElementsByClassName('ZVideoItem-video').length > 0) {
+        if (dom.getElementsByClassName('ZVideoItem-video').length > 0
+            || dom.getElementsByClassName('VideoAnswerPlayer').length > 0) {
             return new VideoItem(dom)
         } else {
             return new Question(dom)
