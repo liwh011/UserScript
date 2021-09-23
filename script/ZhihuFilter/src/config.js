@@ -7,6 +7,12 @@ export const BAN_MODE = {
 }
 
 
+export const LIST_CHOICE = {
+    SAME_AS_TITLE: { value: 0, label: '与标题使用相同屏蔽词' },
+    USE_OWN_LIST: { value: 1, label: '使用单独的屏蔽词' },
+    USE_BOTH: { value: 2, label: '在标题的基础上扩展' },
+}
+
 
 let defaultConfig = {
     // 在这里增加屏蔽词，支持正则（以/开头/结尾的字符串）
@@ -30,6 +36,14 @@ let defaultConfig = {
 
     hideQuestion: BAN_MODE.SHOW_BAN_TIP.value,
     hideVideo: BAN_MODE.SHOW.value,
+
+    shouldTestAnswer: false,
+    whatListShouldBeUsedToTestAnswer: LIST_CHOICE.SAME_AS_TITLE.value,
+    answerBanWordList: [],
+
+    hideControversialQuestion: BAN_MODE.SHOW.value,
+    controversialQuestionEvaluateOffset: 10,
+
 }
 
 

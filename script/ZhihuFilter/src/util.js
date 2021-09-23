@@ -29,9 +29,9 @@ export const isRegexLike = str => str.startsWith('/') && str.endsWith('/')
 
 
 // 寻找文本的屏蔽词
-export const findBanWord = (text) => {
-    for (let i = 0; i < config.banWordList.length; i++) {
-        const v = config.banWordList[i]
+export const findBanWord = (text, wordList) => {
+    for (let i = 0; i < wordList.length; i++) {
+        const v = wordList[i]
         if (!v) continue    // 忽略空字串
         const reg = isRegexLike(v) ? eval(v) : eval(`/(${v})/`)
         if (reg.test(text)) {

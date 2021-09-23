@@ -3,7 +3,7 @@ import { showDom, hideDom, attachHiddenClass, attachShownClass, findChildDom, fi
 import config, { BAN_MODE } from "./config";
 
 export class BlockerFactory {
-    static getBlocker(question) {
+    static getBlocker(question, banMode) {
         /**
          * @type Map<number, typeof Blocker>
          */
@@ -15,10 +15,7 @@ export class BlockerFactory {
             [BAN_MODE.BAN_TAG.value, BanUninterestedTagBlocker],
         ])
 
-        if (question instanceof VideoItem) {
-            return new (map.get(config.hideVideo))(question)
-        }
-        return new (map.get(config.hideQuestion))(question)
+        return new (map.get(banMode))(question)
     }
     
 }
@@ -34,7 +31,7 @@ class Blocker {
 
 
 /**
- * 直接讲整个问题从列表中隐藏
+ * 啥也不干
  */
 export class DoNothingBlocker extends Blocker {
     constructor(question) {
@@ -67,15 +64,14 @@ export class ReplaceWithHiddenNoticeBlocker extends Blocker {
     constructor(question, violatedWord) {
         super()
         this.question = question
-        this.violatedWord = violatedWord
     }
-    block() {
+    block(reason) {
         attachHiddenClass(this.question.dom) // 添加一个class作为标记，标记这个问题已经被隐藏了
         hideDom(this.question.dom.firstChild.firstChild)
 
         // 创建屏蔽成功的提示dom
         let banTipDom = document.createElement('a')
-        banTipDom.appendChild(document.createTextNode(`已屏蔽，点击恢复。（关键词：${this.violatedWord}）`))
+        banTipDom.appendChild(document.createTextNode(`已屏蔽，点击恢复。（${reason}）`))
         banTipDom.classList.add('Button', 'ContentItem-more', 'Button--plain')
         banTipDom.onclick = () => {
             attachShownClass(this.question.dom) // 添加一个class作为标记，标记这个dom已经被手动恢复了
@@ -123,7 +119,7 @@ export class BanUninterestedTagBlocker extends Blocker {
         const uninterestedTags = Array.from(this.question.dom.getElementsByClassName('Button TopstoryItem-uninterestTag'))
         let f = false
         uninterestedTags.forEach(d => {
-            if (findBanWord(d.innerText)) {
+            if (findBanWord(d.innerText, config.banWordList)) {
                 d.click()
                 f = true
             }

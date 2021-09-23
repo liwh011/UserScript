@@ -20,6 +20,9 @@ import { findBanWord } from "./util";
 import {
     BlockerFactory,
 } from "./questionBlocker";
+import { RuleFactory } from "./ruleFilter";
+
+
 
 function main() {
     'use strict';
@@ -27,7 +30,7 @@ function main() {
     let processedDomCount = 0 // 处理过的dom的数目
     const checkAllQuestion = () => {
         /**
-         * @type Question[]
+         * @type Array<ListItem|null>
          */
         const questions = Array.from(questionContainerDom.childNodes)
             .slice(processedDomCount)
@@ -38,10 +41,12 @@ function main() {
             if (!question) return
             if (question.hidden || question.recovered) return
 
-            const bannedWord = findBanWord(question.title)
-            if (!bannedWord) return
-
-            BlockerFactory.getBlocker(question).block()
+            const rules = RuleFactory.getRules(question)
+            rules.apply(question).catch((err) => {
+                console.error(err)
+                const { reason, banMode } = err
+                BlockerFactory.getBlocker(question, banMode).block(reason)
+            })
         })
 
         processedDomCount += questions.length

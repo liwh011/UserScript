@@ -1,5 +1,5 @@
 import zSwitch from './components/zSwitch';
-import config from '../config'
+import config, { LIST_CHOICE } from '../config'
 import zInput from './components/zInput';
 import zButton from './components/zButton';
 import zTag from './components/zTag';
@@ -28,35 +28,16 @@ const html = `
     </div>
 
 
-
-    <div v-if="panelVisible"
-        id="optionPanel"
-        tabindex="-1"
+    <el-tabs type="border-card"
         @click.stop=""
-        style="position: fixed; top: 0; right: 0; width: 450px; height: calc(100vh - 48px); margin: 24px;"
-        class="Popover-content Popover-content--bottom PushNotifications-menuContainer PushNotifications-menuContainer--old Popover-content--fixed Popover-content--arrowed undefined Popover-content-enter-done container">
-        
-        <div class="Messages-header" @click.stop="">
-            <button
-                class="Button Messages-tab Messages-myMessageTab Button--plain"
-                style="display: flex; align-items: center; padding: 0 8px;"
-                @click="hidePanel"
-            >
-                <svg width="25px" height="25px" viewBox="0 0 30 30" class="css-1p094v5" fill="none">
-                    <g opacity=".5">
-                        <g fill="#000" opacity=".8">
-                            <path d="M21.397 6.663l1.414 1.414L8.078 22.811l-1.414-1.415z"></path>
-                            <path d="M22.815 21.4L21.4 22.814 6.66 8.074l1.414-1.415z"></path>
-                        </g>
-                    </g>
-                </svg>
-                <span>隐藏面板</span>
-            </button>
-        </div>
+        v-else
+        style="position: fixed; top: 0; right: 0; width: 500px; height: calc(100vh - 100px); margin: 24px; margin-top: 76px; z-index: 999; overflow-y: auto;">
 
-        <div style="overflow-y: auto; height: calc(100% - 48px);">
-            <div class="css-9ytsk0">
-                <z-thing title="问题屏蔽设定" description="适用于有问有答的列表项">
+        <el-tab-pane label="基本设置">
+            <el-divider>问题屏蔽设定</el-divider>
+            
+            <el-space direction="vertical" alignment="flex-start" :size="32" fill style="width: 100%;">
+                <z-thing title="屏蔽方式" description="当标题含有屏蔽词时的处理方式">
                     <template #extra>
                         <el-select v-model="config.hideQuestion" placeholder="请选择">
                             <el-option
@@ -68,12 +49,34 @@ const html = `
                         </el-select>
                     </template>
                 </z-thing>
-            </div>
 
-            <div class="css-9ytsk0">
-                <z-thing title="视频屏蔽设定" description="适用于视频项">
+                <z-thing title="是否对回答检查屏蔽词" description="开启后，回答的内容也可能触发屏蔽">
                     <template #extra>
-                        <el-select v-model="config.hideVideo" placeholder="请选择">
+                        <el-switch v-model="config.shouldTestAnswer" />
+                    </template>
+                </z-thing>
+
+                <z-thing title="回答屏蔽词设定" description="使用什么屏蔽词库来检查回答的内容。默认与标题共用屏蔽词库，你也可以使用独立的词库" v-if="config.shouldTestAnswer">
+                    <template #extra>
+                        <el-select v-model="config.whatListShouldBeUsedToTestAnswer" placeholder="请选择">
+                            <el-option
+                                v-for="item in banListUsedByAnswerOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
+                    </template>
+                </z-thing>
+            </el-space>
+
+            <el-divider>争议回答设定</el-divider>
+            <el-space direction="vertical" alignment="flex-start" :size="32" fill style="width: 100%;">
+                <el-alert title="争议回答即评论数量高于相同赞数下其他回答的评论数的回答" type="info" />
+
+                <z-thing title="屏蔽方式" description="当评论数高于一定程度时采取的措施">
+                    <template #extra>
+                        <el-select v-model="config.hideControversialQuestion" placeholder="请选择">
                             <el-option
                                 v-for="item in banModeOptions"
                                 :key="item.value"
@@ -83,46 +86,44 @@ const html = `
                         </el-select>
                     </template>
                 </z-thing>
-            </div>
 
-            <!--
-            <div class="css-9ytsk0">
-                <z-thing title="在原问题处显示“已屏蔽该问题”提示" description="掩耳盗铃（仅适用于未开启“设置不感兴趣”）">
+                <z-thing title="阈值偏移" description="调整争议问题的衡量标准，即将期望函数上下平移 (单位：评论数)" v-if="config.hideControversialQuestion!==-1">
                     <template #extra>
-                        <z-switch v-model="config.showBanTip" :disabled="config.setUninterested"></z-switch>
+                        <el-input-number v-model="config.controversialQuestionEvaluateOffset" :min="-100" :max="200" />
                     </template>
                 </z-thing>
-            </div>
+            </el-space>
 
-            <div class="css-9ytsk0">
-                <z-thing title="使用“不感兴趣”来屏蔽问题" description="效果一般，可让推荐系统不推送类似问题">
-                    <template #extra>
-                        <z-switch v-model="config.setUninterested"></z-switch>
-                    </template>
-                </z-thing>
-            </div>
+            <el-divider>视频设定</el-divider>
 
-            <div class="css-9ytsk0">
-                <z-thing title="“不感兴趣”后按照屏蔽词来提交TAG" description="效果强力，带有某个TAG的问题都不会被推送了">
-                    <template #extra>
-                        <z-switch v-model="config.banUninterestedTag" :disabled="!config.setUninterested"></z-switch>
-                    </template>
-                </z-thing>
-            </div>
-            -->
+            <z-thing title="屏蔽方式" description="适用于视频回答">
+                <template #extra>
+                    <el-select v-model="config.hideVideo" placeholder="请选择">
+                        <el-option
+                            v-for="item in banModeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
+                </template>
+            </z-thing>
+            
+        </el-tab-pane>
 
-            <div class="css-9ytsk0">
+        <el-tab-pane label="屏蔽词管理">
+            <el-divider>屏蔽词操作</el-divider>
+
+            <el-space direction="vertical" alignment="flex-start" :size="32" fill style="width: 100%;">
                 <z-thing title="添加屏蔽词" description="支持正则(/reg/)">
-                    <template #extra>
+                    <template #addition>
                         <div style="display: flex;">
-                            <z-input placeholder="输入屏蔽词或正则" v-model="newWordInput" />
-                            <z-button @click="addWord">保存</z-button>
+                            <el-input v-model="newWordInput" placeholder="输入屏蔽词或正则" :rows="3"/>
+                            <el-button @click="addWord" type="primary" style="margin-left: 8px;">保存</el-button>
                         </div>
                     </template>
                 </z-thing>
-            </div>
 
-            <div class="css-9ytsk0">
                 <z-thing title="现有屏蔽词">
                     <template #addition>
                         <el-space wrap v-if="config.banWordList.length>0">
@@ -141,39 +142,34 @@ const html = `
                         <div v-else>暂无</div>
                     </template>
                 </z-thing>
-            </div>
+            </el-space>
 
-            <div class="css-9ytsk0">
+            <el-divider>批量操作</el-divider>
+
+            <el-space direction="vertical" alignment="flex-start" :size="32" fill style="width: 100%;">
                 <z-thing title="批量添加屏蔽词" description="每行一个屏蔽词，支持正则(/reg/)">
                     <template #addition>
                         <div style="display: flex; padding: 0 0px 0px 0px; align-items: flex-end;">
-                            <label class="SearchBar-input Input-wrapper Input-wrapper--grey" style="height: auto;">
-                                <textarea type="text" class="Input" placeholder="输入屏蔽词或正则" style="overflow-y: visible; height: 100px;" v-model="multipleLineNewWordInput"></textarea>
-                            </label>
-                            <z-button @click="multipleLineAddWord">添加</z-button>
+                            <el-input type="textarea" v-model="multipleLineNewWordInput" placeholder="输入屏蔽词或正则" />
+                            <el-button @click="multipleLineAddWord" type="primary" style="margin-left: 8px;">添加</el-button>
                         </div>
                     </template>
                 </z-thing>
-            </div>
 
-            <div class="css-9ytsk0">
                 <z-thing title="导出屏蔽词" description="将所有屏蔽词复制到剪贴板">
                     <template #extra>
                         <z-button @click="exportWordsToClipboard" type="text">{{ copySuccess ? '已复制√' : '复制'}}</z-button>
                     </template>
                 </z-thing>
-            </div>
 
-            <div class="css-9ytsk0">
                 <z-thing title="删除所有屏蔽词" description="删除所有屏蔽词">
                     <template #extra>
                         <z-button @click="clearWordList" type="text" danger>{{ clearAllDoubleConfirm ? '再次点击清空' : '清空'}}</z-button>
                     </template>
                 </z-thing>
-            </div>
-        </div>
-
-    </div>
+            </el-space>
+        </el-tab-pane>
+    </el-tabs>
 
 `;
 
@@ -253,6 +249,9 @@ const script = {
         banModeOptions() {
             return Array.from(Object.values(BAN_MODE))
         },
+        banListUsedByAnswerOptions() {
+            return Array.from(Object.values(LIST_CHOICE))
+        }
     }
 }
 
@@ -265,7 +264,7 @@ const css = `
         border-bottom: 1px solid;
         border-color: #EBEBEB;
         /* padding-right: 0; */
-        padding: 16px;
+        padding: 16px 0;
     }
 
     .css-17ucl2c {
@@ -354,7 +353,7 @@ export const initVue = () => {
     document.body.appendChild(ele)
 
 
-    const app = Vue.createApp({...script, template: html})
+    const app = Vue.createApp({ ...script, template: html })
     app.component(zSwitch.name, zSwitch.definition)
     app.component(zInput.name, zInput.definition)
     app.component(zButton.name, zButton.definition)
