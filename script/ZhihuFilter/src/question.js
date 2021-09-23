@@ -51,7 +51,7 @@ export class ListItem {
 
     getLikeCount(dom) {
         const t = dom.getElementsByClassName('Button VoteButton VoteButton--up')[0]?.innerText
-        const matchRes = t.match(/赞同 ([0-9.,]*)( 万)?/) || [0, 0]
+        const matchRes = t.match(/赞同 ([0-9.,]*)( 万)?/) || ['0', '0']
         return matchRes[2] ? Number(matchRes[1]) * 10000 : Number(matchRes[1].replace(',', ''))
     }
 
