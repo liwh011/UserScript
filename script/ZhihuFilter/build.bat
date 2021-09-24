@@ -8,7 +8,7 @@ SET ENDL=^
 SET head=// ==UserScript==  !ENDL!^
 // @name         知乎关键词屏蔽问题TEST22  !ENDL!^
 // @namespace    http://tampermonkey.net/  !ENDL!^
-// @version      1.0.3  !ENDL!^
+// @version      2.0.0  !ENDL!^
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  !ENDL!^
 // @author       liwh011  !ENDL!^
 // @match        https://www.zhihu.com/  !ENDL!^
