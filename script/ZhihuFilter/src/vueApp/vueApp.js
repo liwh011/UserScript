@@ -31,6 +31,7 @@ const html = `
     <el-tabs type="border-card"
         @click.stop=""
         v-else
+        @tab-click="onTabClick"
         style="position: fixed; top: 0; right: 0; width: 500px; height: calc(100vh - 100px); margin: 24px; margin-top: 76px; z-index: 999; overflow-y: auto;">
 
         <el-tab-pane label="基本设置">
@@ -112,6 +113,15 @@ const html = `
         </el-tab-pane>
 
         <el-tab-pane label="屏蔽词管理">
+            <template v-if="config.whatListShouldBeUsedToTestAnswer!==0">
+                <el-divider>当前操作词库切换</el-divider>
+
+                <el-radio-group v-model="selectedBanWordList" style="width: 100%;">
+                    <el-radio-button :label="0">标题屏蔽词词库</el-radio-button>
+                    <el-radio-button :label="1">回答屏蔽词词库</el-radio-button>
+                </el-radio-group>
+            </template>
+
             <el-divider>屏蔽词操作</el-divider>
 
             <el-space direction="vertical" alignment="flex-start" :size="32" fill style="width: 100%;">
@@ -126,7 +136,7 @@ const html = `
 
                 <z-thing title="现有屏蔽词">
                     <template #addition>
-                        <el-space wrap v-if="config.banWordList.length>0">
+                        <el-space wrap v-if="getSelectedBanWordList().length>0">
                             <el-tag
                                 v-for="(word, idx) in banWordListPreview()"
                                 :key="idx"
@@ -135,8 +145,8 @@ const html = `
                             >
                                 {{ word }}
                             </el-tag>
-                            <el-button type="text" @click="expandBanWords^=1" v-if="config.banWordList.length>3">
-                                {{ expandBanWords==false ? \`展开 (共\${config.banWordList.length}个) >\` : '< 收起' }}
+                            <el-button type="text" @click="expandBanWords^=1" v-if="getSelectedBanWordList().length>3">
+                                {{ expandBanWords==false ? \`展开 (共\${getSelectedBanWordList().length}个) >\` : '< 收起' }}
                             </el-button>
                         </el-space>
                         <div v-else>暂无</div>
@@ -185,6 +195,8 @@ const script = {
             copySuccess: false, // 是否复制成功
             clearAllDoubleConfirm: false,   // 清空全部的二次确认flag
 
+            selectedBanWordList: 0,
+
             config,
         }
     },
@@ -192,18 +204,30 @@ const script = {
         hidePanel() { this.panelVisible = false },
         showPanel() { this.panelVisible = true; },
 
+        onTabClick(tab) {
+            if (this.config.whatListShouldBeUsedToTestAnswer === 0) {
+                this.selectedBanWordList = 0
+            }
+        },
+
+        getSelectedBanWordList() {
+            return this.selectedBanWordList === 0 ? this.config.banWordList : this.config.answerBanWordList
+        },
+
         addWord() {
             if (!this.newWordInput) return
-            if (this.config.banWordList.includes(this.newWordInput)) {
+            const list = this.getSelectedBanWordList()
+            if (list.includes(this.newWordInput)) {
                 this.newWordInput = ''
                 return
             }
-            this.config.banWordList.push(this.newWordInput)
+            list.push(this.newWordInput)
             this.newWordInput = ''
         },
         removeWord(word) {
-            const idx = this.config.banWordList.indexOf(word)
-            this.config.banWordList.splice(idx, 1)
+            const list = this.getSelectedBanWordList()
+            const idx = list.indexOf(word)
+            list.splice(idx, 1)
         },
         clearWordList() {
             if (!this.clearAllDoubleConfirm) {
@@ -213,20 +237,22 @@ const script = {
                 }, 5000);
                 return
             }
-            this.config.banWordList = []
+            this.getSelectedBanWordList().splice(0)
             this.clearAllDoubleConfirm = false
         },
         multipleLineAddWord() {
             if (!this.multipleLineNewWordInput) return
+            const list = this.getSelectedBanWordList()
             const words = this.multipleLineNewWordInput.split('\n')
                 .map(v => v.trim())
-                .filter(v => !!v && !this.config.banWordList.includes(v))
-            this.config.banWordList = this.config.banWordList.concat(words)
+                .filter(v => !!v && !list.includes(v))
+            list.push(...words)
             this.multipleLineNewWordInput = ''
         },
 
         exportWordsToClipboard() {
-            const joinedStr = this.config.banWordList.join('\n')
+            const list = this.getSelectedBanWordList()
+            const joinedStr = list.join('\n')
             GM_setClipboard(joinedStr)
             this.copySuccess = true
             setTimeout(() => {
@@ -236,9 +262,10 @@ const script = {
 
 
         banWordListPreview() {
+            const list = this.getSelectedBanWordList()
             if (this.expandBanWords)
-                return Array.from(config.banWordList).reverse()
-            return Array.from(config.banWordList).reverse().slice(0, 3)
+                return Array.from(list).reverse()
+            return Array.from(list).reverse().slice(0, 3)
         },
     },
     mounted() {
