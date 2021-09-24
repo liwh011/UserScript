@@ -1,17 +1,17 @@
-// ==UserScript==  
-// @name         知乎关键词屏蔽问题TEST22  
-// @namespace    http://tampermonkey.net/  
-// @version      2.0.0  
-// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
-// @author       liwh011  
-// @match        https://www.zhihu.com/  
-// @icon         https://static.zhihu.com/heifetz/favicon.ico  
-// @grant        GM_setValue  
-// @grant        GM_getValue  
-// @grant        GM_addElement  
-// @grant        GM_setClipboard  
-// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/9FE48E8C985E94E88DB1F94E97E998.user.js  
-// ==/UserScript==  
+// ==UserScript==
+// @name         知乎关键词屏蔽问题
+// @namespace    http://tampermonkey.net/
+// @version      2.0.0
+// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
+// @author       liwh011
+// @match        https://www.zhihu.com/
+// @icon         https://static.zhihu.com/heifetz/favicon.ico
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_addElement
+// @grant        GM_setClipboard
+// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/9FE48E8C985E94E88DB1F94E97E998.user.js
+// ==/UserScript==
 
 
 const template$4 = `
