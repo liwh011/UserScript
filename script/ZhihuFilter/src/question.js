@@ -38,13 +38,13 @@ export class ListItem {
     }
 
     getAnswer(dom) {
-        const t = dom.getElementsByClassName('RichText ztext CopyrightRichText-richText css-hnrfcf')[0]?.innerText
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')[0]?.innerText
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[2] : ''
     }
 
     getAuthor(dom) {
-        const t = dom.getElementsByClassName('RichText ztext CopyrightRichText-richText css-hnrfcf')[0]?.innerText
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')[0]?.innerText
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[1] : ''
     }
