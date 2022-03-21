@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         知乎关键词屏蔽问题
 // @namespace    http://tampermonkey.net/
-// @version      2.0.2
+// @version      2.0.3
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
 // @author       liwh011
 // @match        https://www.zhihu.com/
@@ -705,13 +705,13 @@ class ListItem {
     }
 
     getAnswer(dom) {
-        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')[0]?.innerText
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[2] : ''
     }
 
     getAuthor(dom) {
-        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')[0]?.innerText
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[1] : ''
     }
