@@ -1,7 +1,7 @@
 // ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.5  
+// @version      2.0.6  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -677,8 +677,10 @@ class ListItem {
             return new VideoItem(dom)
         } else if (dom.getElementsByClassName('Pc-feedAd-container').length > 0) {
             return new AdItem(dom)
-        } else {
+        } else if (dom.getElementsByClassName('Feed').length > 0) {
             return new Question(dom)
+        } else {
+            return null
         }
     }
 
@@ -1091,7 +1093,7 @@ function main() {
          */
         const questions = Array.from(questionContainerDom.childNodes)
             .slice(processedDomCount)
-            .filter(d => !d.classList.contains('TopstoryItem--advertCard') && d.classList.contains('TopstoryItem-isRecommend'))
+            .filter(d => d.classList.contains('TopstoryItem-isRecommend'))
             .map(v => { try { return ListItem.from(v) } catch (e) { console.log(e); return null } });
 
         questions.forEach(question => {

@@ -4,7 +4,7 @@ import sys
 header = """// ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.5  
+// @version      2.0.6  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  

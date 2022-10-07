@@ -11,8 +11,10 @@ export class ListItem {
             return new VideoItem(dom)
         } else if (dom.getElementsByClassName('Pc-feedAd-container').length > 0) {
             return new AdItem(dom)
-        } else {
+        } else if (dom.getElementsByClassName('Feed').length > 0) {
             return new Question(dom)
+        } else {
+            return null
         }
     }
 
