@@ -1,7 +1,7 @@
 // ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.4  
+// @version      2.0.5  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -763,9 +763,6 @@ class BlockerFactory {
      * @returns {Blocker}
      */
     static getBlocker(question, banMode) {
-        if (question instanceof AdItem) {
-            return RemoveFromListBlocker(question)
-        }
         /**
          * @type Map<number, typeof Blocker>
          */
@@ -895,6 +892,8 @@ class BanUninterestedTagBlocker extends Blocker {
 class RuleFactory {
     static getRules(question) {
         const ruleSet = new RuleFilterSet();
+
+        ruleSet.add(new AdFilter());
 
         // 视频
         if (config.hideVideo !== BAN_MODE.SHOW.value) {
@@ -1057,6 +1056,23 @@ class VideoFilter extends RuleFilter {
         return new Promise((resolve, reject) => {
             if (question instanceof VideoItem)
                 return reject(genValidateResult(`视频`, config.hideVideo))
+            return resolve()
+        })
+    }
+}
+
+/**
+ * 广告
+ */
+class AdFilter extends RuleFilter {
+    constructor() {
+        super();
+    }
+
+    isValid(question) {
+        return new Promise((resolve, reject) => {
+            if (question instanceof AdItem)
+                return reject(genValidateResult(`广告`, BAN_MODE.HIDE.value))
             return resolve()
         })
     }

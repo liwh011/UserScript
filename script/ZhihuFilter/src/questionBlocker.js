@@ -9,9 +9,6 @@ export class BlockerFactory {
      * @returns {Blocker}
      */
     static getBlocker(question, banMode) {
-        if (question instanceof AdItem) {
-            return RemoveFromListBlocker(question)
-        }
         /**
          * @type Map<number, typeof Blocker>
          */

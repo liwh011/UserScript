@@ -1,11 +1,13 @@
 import config, { BAN_MODE, LIST_CHOICE } from "./config"
-import { ListItem, VideoItem } from "./question"
+import { AdItem, ListItem, VideoItem } from "./question"
 import { findBanWord } from "./util"
 
 
 export class RuleFactory {
     static getRules(question) {
         const ruleSet = new RuleFilterSet()
+
+        ruleSet.add(new AdFilter())
 
         // 视频
         if (config.hideVideo !== BAN_MODE.SHOW.value) {
@@ -170,6 +172,23 @@ class VideoFilter extends RuleFilter {
         return new Promise((resolve, reject) => {
             if (question instanceof VideoItem)
                 return reject(genValidateResult(`视频`, config.hideVideo))
+            return resolve()
+        })
+    }
+}
+
+/**
+ * 广告
+ */
+class AdFilter extends RuleFilter {
+    constructor() {
+        super()
+    }
+
+    isValid(question) {
+        return new Promise((resolve, reject) => {
+            if (question instanceof AdItem)
+                return reject(genValidateResult(`广告`, BAN_MODE.HIDE.value))
             return resolve()
         })
     }
