@@ -1,9 +1,17 @@
-import { Question, VideoItem } from "./question";
+import { AdItem, Question, VideoItem } from "./question";
 import { showDom, hideDom, attachHiddenClass, attachShownClass, findChildDom, findBanWord } from "./util";
 import config, { BAN_MODE } from "./config";
 
 export class BlockerFactory {
+    /**
+     * 
+     * @param {Question} question 
+     * @returns {Blocker}
+     */
     static getBlocker(question, banMode) {
+        if (question instanceof AdItem) {
+            return RemoveFromListBlocker(question)
+        }
         /**
          * @type Map<number, typeof Blocker>
          */

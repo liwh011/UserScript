@@ -9,6 +9,8 @@ export class ListItem {
         if (dom.getElementsByClassName('ZVideoItem-video').length > 0
             || dom.getElementsByClassName('VideoAnswerPlayer').length > 0) {
             return new VideoItem(dom)
+        } else if (dom.getElementsByClassName('Pc-feedAd-container').length > 0) {
+            return new AdItem(dom)
         } else {
             return new Question(dom)
         }
@@ -77,6 +79,12 @@ export class Question extends ListItem {
 
 
 export class VideoItem extends ListItem {
+    constructor(dom) {
+        super(dom)
+    }
+}
+
+export class AdItem extends ListItem {
     constructor(dom) {
         super(dom)
     }

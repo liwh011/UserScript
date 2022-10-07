@@ -1,18 +1,17 @@
-// ==UserScript==
-// @name         知乎关键词屏蔽问题
-// @namespace    http://tampermonkey.net/
-// @version      2.0.3
-// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
-// @author       liwh011
-// @match        https://www.zhihu.com/
-// @icon         https://static.zhihu.com/heifetz/favicon.ico
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_addElement
-// @grant        GM_setClipboard
-// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/9FE48E8C985E94E88DB1F94E97E998.user.js
+// ==UserScript==  
+// @name         知乎关键词屏蔽问题  
+// @namespace    http://tampermonkey.net/  
+// @version      2.0.4  
+// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
+// @author       liwh011  
+// @match        https://www.zhihu.com/  
+// @icon         https://static.zhihu.com/heifetz/favicon.ico  
+// @grant        GM_setValue  
+// @grant        GM_getValue  
+// @grant        GM_addElement  
+// @grant        GM_setClipboard  
+// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/%E7%9F%A5%E4%B9%8E%E6%8C%89%E5%85%B3%E9%94%AE%E8%AF%8D%E5%B1%8F%E8%94%BD%E9%97%AE%E9%A2%98.user.js  
 // ==/UserScript==
-
 
 const template$4 = `
     <label class="Switch" :class="{ 'Switch--checked': modelValue, 'Switch--disabled': disabled }">
@@ -32,7 +31,7 @@ const script$5 = {
     ],
 
     emits: ['update:modelValue'],
-
+    
     computed: {
         value: {
             get() {
@@ -676,6 +675,8 @@ class ListItem {
         if (dom.getElementsByClassName('ZVideoItem-video').length > 0
             || dom.getElementsByClassName('VideoAnswerPlayer').length > 0) {
             return new VideoItem(dom)
+        } else if (dom.getElementsByClassName('Pc-feedAd-container').length > 0) {
+            return new AdItem(dom)
         } else {
             return new Question(dom)
         }
@@ -705,14 +706,14 @@ class ListItem {
     }
 
     getAnswer(dom) {
-        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
-        const matchRes = t.match(/(.*?)：(.*)/)
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText;
+        const matchRes = t.match(/(.*?)：(.*)/);
         return matchRes ? matchRes[2] : ''
     }
 
     getAuthor(dom) {
-        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
-        const matchRes = t.match(/(.*?)：(.*)/)
+        const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText;
+        const matchRes = t.match(/(.*?)：(.*)/);
         return matchRes ? matchRes[1] : ''
     }
 
@@ -749,8 +750,22 @@ class VideoItem extends ListItem {
     }
 }
 
+class AdItem extends ListItem {
+    constructor(dom) {
+        super(dom);
+    }
+}
+
 class BlockerFactory {
+    /**
+     * 
+     * @param {Question} question 
+     * @returns {Blocker}
+     */
     static getBlocker(question, banMode) {
+        if (question instanceof AdItem) {
+            return RemoveFromListBlocker(question)
+        }
         /**
          * @type Map<number, typeof Blocker>
          */
@@ -764,7 +779,7 @@ class BlockerFactory {
 
         return new (map.get(banMode))(question)
     }
-
+    
 }
 
 
@@ -908,7 +923,7 @@ class RuleFactory {
                 ruleSet.add(new WordListFilter_Answer(wordList));
             }
         }
-
+        
         // 争议问题检查
         if (config.hideControversialQuestion !== BAN_MODE.SHOW.value) {
             ruleSet.add(new LikeCommentRatioFilter(config.controversialQuestionEvaluateOffset));
