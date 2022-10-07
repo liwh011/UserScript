@@ -1,4 +1,5 @@
 @echo off
+chcp 65001
 
 setlocal enableDelayedExpansion
 
@@ -6,10 +7,10 @@ SET ENDL=^
 
 
 SET head=// ==UserScript==  !ENDL!^
-// @name         ֪���ؼ�����������TEST22  !ENDL!^
+// @name         知乎关键词屏蔽问题  !ENDL!^
 // @namespace    http://tampermonkey.net/  !ENDL!^
-// @version      2.0.0  !ENDL!^
-// @description  ���չؼ��ʻ���������֪����ҳ���ζ�Ӧ������  !ENDL!^
+// @version      2.0.4  !ENDL!^
+// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  !ENDL!^
 // @author       liwh011  !ENDL!^
 // @match        https://www.zhihu.com/  !ENDL!^
 // @icon         https://static.zhihu.com/heifetz/favicon.ico  !ENDL!^
@@ -23,5 +24,11 @@ SET head=// ==UserScript==  !ENDL!^
 
 
 
-cd ./script/ZhihuFilter
-rollup ./src/index.js -o dist.js --intro "!head!"
+@REM cd ./script/ZhihuFilter
+call rollup ./src/index.js -o dist.js
+
+echo !head! > 知乎按关键词屏蔽问题.user.js
+for /f "tokens=* delims=" %%i in (dist.js) do (
+    echo.%%i >> 知乎按关键词屏蔽问题.user.js
+)
+move 知乎按关键词屏蔽问题.user.js ../
