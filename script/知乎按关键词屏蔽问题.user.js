@@ -1,7 +1,7 @@
 // ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.6  
+// @version      2.0.7  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -709,24 +709,28 @@ class ListItem {
 
     getAnswer(dom) {
         const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText;
+        if (!t) return ''
         const matchRes = t.match(/(.*?)：(.*)/);
         return matchRes ? matchRes[2] : ''
     }
 
     getAuthor(dom) {
         const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText;
+        if (!t) return ''
         const matchRes = t.match(/(.*?)：(.*)/);
         return matchRes ? matchRes[1] : ''
     }
 
     getLikeCount(dom) {
         const t = dom.getElementsByClassName('Button VoteButton VoteButton--up')[0]?.innerText;
+        if (!t) return ''
         const matchRes = t.match(/赞同 ([0-9.,]*)( 万)?/) || ['0', '0'];
         return matchRes[2] ? Number(matchRes[1]) * 10000 : Number(matchRes[1].replace(',', ''))
     }
 
     getCommentCount(dom) {
         const t = findChildDom(dom, d => d.type === 'button' && d.innerText.includes('评论'))?.innerText || '';
+        if (!t) return ''
         if (t.match(/添加评论/)) return 0
         return Number(t.match(/([0-9]*) 条评论/)[1])
     }
@@ -1094,7 +1098,14 @@ function main() {
         const questions = Array.from(questionContainerDom.childNodes)
             .slice(processedDomCount)
             .filter(d => d.classList.contains('TopstoryItem-isRecommend'))
-            .map(v => { try { return ListItem.from(v) } catch (e) { console.log(e); return null } });
+            .map(v => { 
+                try { 
+                    return ListItem.from(v) 
+                } catch (e) { 
+                    console.log(e); 
+                    return null 
+                } 
+            });
 
         questions.forEach(question => {
             if (!question) return

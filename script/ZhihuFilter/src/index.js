@@ -35,7 +35,14 @@ function main() {
         const questions = Array.from(questionContainerDom.childNodes)
             .slice(processedDomCount)
             .filter(d => d.classList.contains('TopstoryItem-isRecommend'))
-            .map(v => { try { return ListItem.from(v) } catch (e) { console.log(e); return null } })
+            .map(v => { 
+                try { 
+                    return ListItem.from(v) 
+                } catch (e) { 
+                    console.log(e); 
+                    return null 
+                } 
+            })
 
         questions.forEach(question => {
             if (!question) return

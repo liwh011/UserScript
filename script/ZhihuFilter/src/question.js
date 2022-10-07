@@ -43,24 +43,28 @@ export class ListItem {
 
     getAnswer(dom) {
         const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
+        if (!t) return ''
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[2] : ''
     }
 
     getAuthor(dom) {
         const t = dom.querySelector('.RichText.ztext.CopyrightRichText-richText')?.innerText
+        if (!t) return ''
         const matchRes = t.match(/(.*?)：(.*)/)
         return matchRes ? matchRes[1] : ''
     }
 
     getLikeCount(dom) {
         const t = dom.getElementsByClassName('Button VoteButton VoteButton--up')[0]?.innerText
+        if (!t) return ''
         const matchRes = t.match(/赞同 ([0-9.,]*)( 万)?/) || ['0', '0']
         return matchRes[2] ? Number(matchRes[1]) * 10000 : Number(matchRes[1].replace(',', ''))
     }
 
     getCommentCount(dom) {
         const t = findChildDom(dom, d => d.type === 'button' && d.innerText.includes('评论'))?.innerText || ''
+        if (!t) return ''
         if (t.match(/添加评论/)) return 0
         return Number(t.match(/([0-9]*) 条评论/)[1])
     }
