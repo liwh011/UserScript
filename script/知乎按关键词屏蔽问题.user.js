@@ -1,7 +1,7 @@
 // ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.7  
+// @version      2.0.8  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -1084,10 +1084,6 @@ class AdFilter extends RuleFilter {
     }
 }
 
-// ==UserScript==
-
-
-
 function main() {
     const questionContainerDom = document.getElementsByClassName('Topstory-recommend')[0].firstChild;
     let processedDomCount = 0; // 处理过的dom的数目
@@ -1135,19 +1131,19 @@ function main() {
 
 // 加载VUEJS
 GM_addElement('script', {
-    src: 'https://unpkg.com/vue@next',
+    src: 'https://unpkg.zhimg.com/vue@next',
     type: 'text/javascript'
 });
 
 setTimeout(() => {
     GM_addElement('script', {
-        src: 'https://unpkg.com/element-plus',
+        src: 'https://npm.elemecdn.com/element-plus',
         type: 'text/javascript'
     });
 }, 1000);
 
 GM_addElement('link', {
-    href: 'https://unpkg.com/element-plus/dist/index.css',
+    href: 'https://npm.elemecdn.com/element-plus/dist/index.css',
     rel: 'stylesheet'
 });
 

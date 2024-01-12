@@ -4,7 +4,7 @@ import sys
 header = """// ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.7  
+// @version      2.0.8  
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -18,7 +18,7 @@ header = """// ==UserScript==
 
 """
 
-os.system("cd ./script/ZhihuFilter && rollup ./src/index.js -o dist.js")
+os.system("cd ./script/ZhihuFilter && npx rollup ./src/index.js -o dist.js")
 with open("./script/ZhihuFilter/dist.js", "r", encoding="utf-8") as f:
     content = f.read()
 with open("./script/ZhihuFilter/dist.js", "w", encoding="utf-8") as f:

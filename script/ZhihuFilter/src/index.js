@@ -1,18 +1,3 @@
-// ==UserScript==
-// @name         知乎关键词屏蔽问题
-// @namespace    http://tampermonkey.net/
-// @version      1.0.3
-// @description  按照关键词或者正则，在知乎首页屏蔽对应的问题
-// @author       liwh011
-// @match        https://www.zhihu.com/
-// @icon         https://static.zhihu.com/heifetz/favicon.ico
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_addElement
-// @grant        GM_setClipboard
-// @updateURL    https://github.com/liwh011/UserScript/raw/master/script/%E7%9F%A5%E4%B9%8E%E6%8C%89%E5%85%B3%E9%94%AE%E8%AF%8D%E5%B1%8F%E8%94%BD%E9%97%AE%E9%A2%98.user.js
-// ==/UserScript==
-
 import { initVue } from "./vueApp/index";
 import { ListItem, Question } from './question'
 import config from './config'
@@ -72,19 +57,19 @@ function main() {
 
 // 加载VUEJS
 GM_addElement('script', {
-    src: 'https://unpkg.com/vue@next',
+    src: 'https://unpkg.zhimg.com/vue@next',
     type: 'text/javascript'
 });
 
 setTimeout(() => {
     GM_addElement('script', {
-        src: 'https://unpkg.com/element-plus',
+        src: 'https://npm.elemecdn.com/element-plus',
         type: 'text/javascript'
     });
 }, 1000);
 
 GM_addElement('link', {
-    href: 'https://unpkg.com/element-plus/dist/index.css',
+    href: 'https://npm.elemecdn.com/element-plus/dist/index.css',
     rel: 'stylesheet'
 });
 
