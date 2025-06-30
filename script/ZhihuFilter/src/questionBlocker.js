@@ -104,7 +104,7 @@ export class SetUninterestedBlocker extends Blocker {
 
         const id = moreBtn.id.match(/Popover([0-9]*)-toggle/)[1]
         findChildDom(document.getElementById(`Popover${id}-content`),
-            c => c.type === 'button' && c.innerText === '不感兴趣')?.click()
+            c => c.type === 'button' && c.innerText === '不喜欢该内容')?.click()
     }
 }
 

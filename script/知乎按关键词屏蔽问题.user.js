@@ -1,7 +1,7 @@
 // ==UserScript==  
 // @name         知乎关键词屏蔽问题  
 // @namespace    http://tampermonkey.net/  
-// @version      2.0.8  
+// @version      2.0.9
 // @description  按照关键词或者正则，在知乎首页屏蔽对应的问题  
 // @author       liwh011  
 // @match        https://www.zhihu.com/  
@@ -864,7 +864,7 @@ class SetUninterestedBlocker extends Blocker {
 
         const id = moreBtn.id.match(/Popover([0-9]*)-toggle/)[1];
         findChildDom(document.getElementById(`Popover${id}-content`),
-            c => c.type === 'button' && c.innerText === '不感兴趣')?.click();
+            c => c.type === 'button' && c.innerText === '不喜欢该内容')?.click();
     }
 }
 
